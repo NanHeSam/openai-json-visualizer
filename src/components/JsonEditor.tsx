@@ -5,7 +5,9 @@ export function JsonEditor({
   onJsonChange,
   isValid,
   darkMode,
-  selectedMessageIndex
+  selectedMessageIndex,
+  monacoEditorRef,
+  onMessageClick
 }) {
   const [jsonString, setJsonString] = useState('');
   const editorRef = useRef(null);
@@ -29,9 +31,24 @@ export function JsonEditor({
   };
   const handleEditorDidMount = editor => {
     editorRef.current = editor;
+    monacoEditorRef.current = editor; // Store editor instance for scroll sync
     if (selectedMessageIndex !== null) {
       highlightMessageInEditor(selectedMessageIndex);
     }
+    
+    // Listen for custom message click events
+    const handleMessageClick = (event) => {
+      if (onMessageClick && event.detail && typeof event.detail.messageIndex === 'number') {
+        onMessageClick(event.detail.messageIndex);
+      }
+    };
+    
+    editor.getDomNode().addEventListener('messageClick', handleMessageClick);
+    
+    // Cleanup function
+    return () => {
+      editor.getDomNode().removeEventListener('messageClick', handleMessageClick);
+    };
   };
   // Improved debug version: Print logs and fix message object detection to avoid matching tool_calls or nested objects.
   // The previous logic counted any '{' at the top level of the messages array, but this can match nested objects (like tool_calls).
@@ -58,7 +75,6 @@ export function JsonEditor({
             inMessagesArray = true;
             messagesArrayStart = i;
             arrayBracketDepth = (line.match(/\[/g) || []).length - (line.match(/]/g) || []).length;
-            console.log('[DEBUG] Found start of messages array at line', i, 'arrayBracketDepth:', arrayBracketDepth);
           }
         } else {
           // Track array bracket depth to find the end of the messages array
@@ -66,13 +82,11 @@ export function JsonEditor({
           arrayBracketDepth -= (line.match(/]/g) || []).length;
           if (arrayBracketDepth === 0) {
             messagesArrayEnd = i;
-            console.log('[DEBUG] Found end of messages array at line', i);
             break;
           }
         }
       }
       if (messagesArrayStart === -1 || messagesArrayEnd === -1) {
-        console.log('[DEBUG] Could not find messages array in JSON');
         return;
       }
 
@@ -98,12 +112,10 @@ export function JsonEditor({
             inObject = true;
             objectBracketDepth = (trimmed.match(/{/g) || []).length - (trimmed.match(/}/g) || []).length;
             messageIdx++;
-            console.log(`[DEBUG] Candidate message object at line ${i}, messageIdx=${messageIdx}, objectBracketDepth=${objectBracketDepth}`);
             if (messageIdx === index) {
               foundStart = i;
               if (objectBracketDepth === 0) {
                 foundEnd = i;
-                console.log(`[DEBUG] Message #${index} is single-line at line`, i);
                 break;
               }
               continue;
@@ -115,7 +127,6 @@ export function JsonEditor({
           objectBracketDepth -= (line.match(/}/g) || []).length;
           if (objectBracketDepth === 0) {
             foundEnd = i;
-            console.log(`[DEBUG] Found end of message #${index} at line`, i);
             break;
           }
         } else {
@@ -129,7 +140,6 @@ export function JsonEditor({
       }
 
       if (foundStart !== -1 && foundEnd !== -1) {
-        console.log(`[DEBUG] Highlighting message #${index} from line ${foundStart} to ${foundEnd}`);
         const startColumn = 1;
         const endColumn = lines[foundEnd].length + 1;
         decorationsRef.current = editorRef.current.deltaDecorations([], [{
@@ -148,7 +158,6 @@ export function JsonEditor({
         // Scroll to the highlighted message
         editorRef.current.revealLineInCenter(foundStart + 1);
       } else {
-        console.log(`[DEBUG] Could not find start/end lines for message #${index}`);
       }
     } catch (error) {
       console.error('Error highlighting message:', error);
@@ -161,8 +170,14 @@ export function JsonEditor({
           {isValid ? 'Valid JSON' : 'Invalid JSON'}
         </div>
       </div>
-      <div className="flex-1 overflow-auto">
-        <MonacoEditor value={jsonString} onChange={handleChange} language="json" theme={darkMode ? 'vs-dark' : 'vs-light'} onMount={handleEditorDidMount} />
+      <div className="flex-1 overflow-hidden">
+        <MonacoEditor 
+          value={jsonString} 
+          onChange={handleChange} 
+          language="json" 
+          theme={darkMode ? 'vs-dark' : 'vs-light'} 
+          onMount={handleEditorDidMount}
+        />
       </div>
     </div>;
 }

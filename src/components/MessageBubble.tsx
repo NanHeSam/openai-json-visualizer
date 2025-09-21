@@ -5,7 +5,8 @@ export function MessageBubble({
   index,
   config,
   onContentChange,
-  onClick
+  onClick,
+  selected = false
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
@@ -96,7 +97,7 @@ export function MessageBubble({
           </div>}
       </div>;
   };
-  return <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`} onClick={() => onClick(index)}>
+  return <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} ${selected ? 'ring-2 ring-blue-500 ring-opacity-75 rounded-lg p-1 bg-blue-50 dark:bg-blue-900/20' : ''}`} onClick={() => onClick(index)} data-message-index={index}>
       <div className={`max-w-[80%] rounded-lg p-4 ${getBubbleStyles()} cursor-pointer hover:opacity-90 transition-opacity`}>
         {config.showRoleLabels && !isTool && <div className="text-xs mb-1 font-semibold uppercase">
             {message.role}

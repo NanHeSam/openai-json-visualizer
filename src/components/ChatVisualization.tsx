@@ -5,7 +5,8 @@ export function ChatVisualization({
   data,
   config,
   onMessageUpdate,
-  onMessageSelect
+  onMessageSelect,
+  selectedMessageIndex
 }) {
   if (!data || !data.messages || !Array.isArray(data.messages)) {
     return <div className="h-full flex items-center justify-center">
@@ -27,7 +28,7 @@ export function ChatVisualization({
       </div>
       <FunctionsPanel functions={data.functions} tools={data.tools} darkMode={config.darkMode} />
       <div className={`flex-1 overflow-y-auto p-4 ${getSpacingClass(config.messageSpacing)}`}>
-        {data.messages.map((message, index) => <MessageBubble key={index} message={message} index={index} config={config} onContentChange={newContent => handleMessageContentChange(index, newContent)} onClick={() => handleMessageClick(index)} />)}
+        {data.messages.map((message, index) => <MessageBubble key={index} message={message} index={index} config={config} onContentChange={newContent => handleMessageContentChange(index, newContent)} onClick={() => handleMessageClick(index)} selected={selectedMessageIndex === index} />)}
       </div>
     </div>;
 }
