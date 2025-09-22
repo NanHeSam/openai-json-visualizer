@@ -62,7 +62,7 @@ export function App() {
   return (
     <div className={`flex flex-col h-screen w-full ${config.darkMode ? 'bg-gray-900 text-white' : 'bg-white text-gray-800'}`}>
       <header className="flex justify-between items-center p-4 border-b">
-        <h1 className="text-xl font-bold">OpenAI JSON Visualizer</h1>
+        <h1 className="text-xl font-bold">Chat Visualizer for AI Engineers</h1>
         <button onClick={() => setConfigOpen(!configOpen)} className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
           {configOpen ? 'Hide Config' : 'Show Config'}
         </button>

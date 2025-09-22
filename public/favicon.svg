@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e293b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f172a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bubble1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#14b8a6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0d9488;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="bubble2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0d9488;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0f766e;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="32" height="32" fill="url(#bg)" rx="4"/>
+  
+  <!-- Chat bubble 1 (top) -->
+  <rect x="4" y="6" width="12" height="6" fill="url(#bubble1)" rx="3"/>
+  <text x="10" y="10" font-family="monospace" font-size="4" fill="white" text-anchor="middle">{"role":"user"</text>
+  
+  <!-- Chat bubble 2 (bottom) -->
+  <rect x="4" y="14" width="12" height="6" fill="url(#bubble2)" rx="3"/>
+  <text x="10" y="18" font-family="monospace" font-size="4" fill="white" text-anchor="middle">{"role":"ass</text>
+  
+  <!-- Magnifying glass -->
+  <circle cx="22" cy="12" r="4" fill="none" stroke="white" stroke-width="1.5"/>
+  <line x1="25" y1="15" x2="28" y2="18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+  
+  <!-- Text in magnifying glass -->
+  <text x="22" y="13" font-family="monospace" font-size="3" fill="white" text-anchor="middle">ass</text>
+</svg>
